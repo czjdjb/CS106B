@@ -40,7 +40,21 @@ void printQueue(queue<axisMap> q)
     }
     cout << endl;
 }
-void TransMap();
+void TransMap(vector<vector<int>> &mazeMap)
+{
+    for (int i = 0; i < mazeMap.size(); i++)
+    {
+        for (int j = 0; j < mazeMap[i].size(); j++)
+        {
+            if (mazeMap[i][j] == 99)
+                mazeMap[i][j] = '#';
+            else if (mazeMap[i][j] == 0)
+                mazeMap[i][j] = ' ';
+            else if (mazeMap[i][j] == 1)
+                mazeMap[i][j] = '~';
+        }
+    }
+}
 int JudgeStruct(axisMap a, axisMap b)
 {
     if (a.row == b.row && a.column == b.column)
@@ -48,13 +62,13 @@ int JudgeStruct(axisMap a, axisMap b)
     else
         return 0;
 }
-void PrintMap(const vector<vector<int>> &mazeMap)
+void PrintMap(const vector<vector<int>> &mazeMap) // 暂时有char更改用于检查数组的时候把char（）删掉即可
 {
     for (int i = 0; i < mazeMap.size(); i++)
     {
         for (int j = 0; j < mazeMap[i].size(); j++)
         {
-            cout << mazeMap[i][j] << "\t";
+            cout << char(mazeMap[i][j]) << "\t";
         }
         cout << endl;
     }
@@ -84,7 +98,7 @@ void openFile(string filename, vector<vector<int>> &mazeMap)
     // PrintMap(mazeMap);
 }
 void MoveChess(const vector<vector<int>> &mazeMap, queue<axisMap> &allQueue, set<axisMap> &allSet,
-               vector<vector<int>> &mazeMapAnswer, int &flag)
+               vector<vector<int>> &mazeMapAnswer, int &flag, map<axisMap, axisMap> &allMap)
 {
     axisMap temp = allQueue.front();
     if (temp.row < 21 && mazeMap[temp.row + 1][temp.column] != 99) // 玩家下移
@@ -98,7 +112,9 @@ void MoveChess(const vector<vector<int>> &mazeMap, queue<axisMap> &allQueue, set
             // set更新
             allSet.insert(temp);
             // answer更新
-            mazeMapAnswer[temp.row][temp.column] = 1;
+            // mazeMapAnswer[temp.row][temp.column] = 1;
+            // map更新
+            allMap.insert({temp, allQueue.front()});
             if (mazeMap[temp.row][temp.column] == 100)
             {
                 flag = 1;
@@ -119,7 +135,9 @@ void MoveChess(const vector<vector<int>> &mazeMap, queue<axisMap> &allQueue, set
             // set更新
             allSet.insert(temp);
             // answer更新
-            mazeMapAnswer[temp.row][temp.column] = 1;
+            // mazeMapAnswer[temp.row][temp.column] = 1;
+            // map更新
+            allMap.insert({temp, allQueue.front()});
             if (mazeMap[temp.row][temp.column] == 100)
             {
                 flag = 1;
@@ -140,7 +158,9 @@ void MoveChess(const vector<vector<int>> &mazeMap, queue<axisMap> &allQueue, set
             // set更新
             allSet.insert(temp);
             // answer更新
-            mazeMapAnswer[temp.row][temp.column] = 1;
+            // mazeMapAnswer[temp.row][temp.column] = 1;
+            // map更新
+            allMap.insert({temp, allQueue.front()});
             if (mazeMap[temp.row][temp.column] == 100)
             {
                 flag = 1;
@@ -161,7 +181,9 @@ void MoveChess(const vector<vector<int>> &mazeMap, queue<axisMap> &allQueue, set
             // set更新
             allSet.insert(temp);
             // answer更新
-            mazeMapAnswer[temp.row][temp.column] = 1;
+            // mazeMapAnswer[temp.row][temp.column] = 1;
+            // map更新
+            allMap.insert({temp, allQueue.front()});
             if (mazeMap[temp.row][temp.column] == 100)
             {
                 flag = 1;
@@ -173,7 +195,7 @@ void MoveChess(const vector<vector<int>> &mazeMap, queue<axisMap> &allQueue, set
     }
 }
 void FinalChess(vector<vector<int>> &mazeMap, queue<axisMap> &allQueue, set<axisMap> &allSet,
-                vector<vector<int>> &mazeMapAnswer)
+                vector<vector<int>> &mazeMapAnswer, map<axisMap, axisMap> &allMap)
 {
     int maxNum = 1000;
     int flag = 0;
@@ -181,7 +203,7 @@ void FinalChess(vector<vector<int>> &mazeMap, queue<axisMap> &allQueue, set<axis
     int step = 0;
     while (flag == 0 && step < maxNum)
     {
-        MoveChess(mazeMap, allQueue, allSet, mazeMapAnswer, flag);
+        MoveChess(mazeMap, allQueue, allSet, mazeMapAnswer, flag, allMap);
         allQueue.pop();
         step++;
         // cout << step;
@@ -202,6 +224,18 @@ void FinalChess(vector<vector<int>> &mazeMap, queue<axisMap> &allQueue, set<axis
         cout << "step over!" << endl;
         return;
     }
+    axisMap temp = allQueue.back();
+    while (1)
+    {
+        if (temp.row == 10000 && temp.column == 10000)
+        {
+            cout << "map finish" << endl;
+            break;
+        }
+        mazeMapAnswer[temp.row][temp.column] = 1;
+        temp = allMap.at(temp);
+        count++;
+    }
     for (int i = 0; i < mazeMap.size(); i++)
     {
         for (int j = 0; j < mazeMap[i].size(); j++)
@@ -209,10 +243,12 @@ void FinalChess(vector<vector<int>> &mazeMap, queue<axisMap> &allQueue, set<axis
             if (mazeMapAnswer[i][j] == 1)
             {
                 mazeMap[i][j] = mazeMapAnswer[i][j];
-                PrintMap(mazeMap);
+                // PrintMap(mazeMap);
             }
         }
     }
+    TransMap(mazeMap);
+    PrintMap(mazeMap);
 }
 int main()
 {
@@ -224,16 +260,21 @@ int main()
     queue<axisMap> allQueue;
     set<axisMap> allSet;
     axisMap initM;
+    axisMap startpoint;
+    map<axisMap, axisMap> allMap;
     // 初始化
     // int flag = 0;
     initM.row = 1;
     initM.column = 0;
+    startpoint.row = 10000;
+    startpoint.column = 10000;
+    allMap.insert({initM, startpoint});
     allQueue.push(initM);
     allSet.insert(initM);
     mazeMapAnswer[initM.row][initM.column] = 1;
     openFile(filename, mazeMap);
     // cout << "mazeMap[3][5] = " << mazeMap[3][5];
-    FinalChess(mazeMap, allQueue, allSet, mazeMapAnswer);
+    FinalChess(mazeMap, allQueue, allSet, mazeMapAnswer, allMap);
     // MoveChess(mazeMap, allQueue, allSet, mazeMapAnswer, flag);
     // PrintMap(mazeMapAnswer);
     return 0;

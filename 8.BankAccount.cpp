@@ -34,7 +34,7 @@ void bankAccount::SaveMoney(int value)
 void bankAccount::ChargeMoney(int value)
 {
     if (money < value)
-        throw "less money";
+        throw "less money"; // #include <stdexcept> 这个库
     money -= value;
     PrintAccountMoney();
 }

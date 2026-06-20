@@ -4,7 +4,8 @@ using namespace std;
 class bankAccount
 {
 public:
-    bankAccount(string a, int b) : name(a), money(b) {}
+    bankAccount(string a, int b) : name(a), money(b) {} // 用下面这个更好 可以避免原值copy
+    // BankAccount(const std::string& name, double initialBalance);
     void PrintAccount();
     void PrintAccountName();
     void PrintAccountMoney();

@@ -1,6 +1,7 @@
 // printtree ->traversal 1 前序 2中序 3后序  freetree
 // 用binaryTree的方式add节点 一样大的按小处理 小是在左节点
 // tree 的递归写法很关键 用一个help的函数帮助 调用内部的head class是调用函数方法 而方法引出head
+// removeNode 在14 15中实现
 #include <iostream>
 #include <string>
 #include <vector>
@@ -36,6 +37,23 @@ bool MoreString(string &oString, string &jString)
         return true;
     else
         return false;
+}
+bool JudgeString(string &oString, string &jString)
+{
+    int flag = 0;
+    if (oString.size() != jString.szie())
+    {
+        return false;
+    }
+    for (int i = 0; i < oString.size(); i++)
+    {
+        if (oString[i] = jString[i])
+            flag = 1;
+    }
+    if (flag == 1)
+        return false;
+    else
+        return true;
 }
 void Tree::addNode(string newData)
 {
@@ -109,8 +127,14 @@ void Tree::PostOrder()
 {
     postOrderHelper(head);
 }
+// void Tree::removeNode(string removeData)
+// {
+//     TreeNode *moveNode = head;
+
+// }
 Tree::~Tree()
 {
+    // 用后序 因为节点不提前删除
 }
 int main()
 {

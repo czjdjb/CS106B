@@ -1,5 +1,5 @@
-// 功能 1 enqueue 2 dequeue 3 peek（看最先出队的元素） 4 size 5 isempty 6 clear
-// 实现的是最小堆
+// 功能 1 enqueue 2 dequeue(堆去掉的是堆顶 返回堆顶值) 3 peek（看最先出队的元素） 4 size 5 isempty 6 clear
+// 7 remove 实现的是最小堆
 #pragma once
 using namespace std;
 class Heap
@@ -10,12 +10,13 @@ public:
     void CountIndex(int index);
     void reDefine(int *&a); // 扩大数组用的
     void enqueue(int value);
-    void dequeue();
+    int dequeue();
     void peek();
     int size();
     bool isempty();
     void clear();
-    void remove();
+    // void remove(int value); //不常用 不实现 因为想去网吧了
+    void PrintHeap();
 
 private:
     int length;

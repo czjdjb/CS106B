@@ -3,18 +3,33 @@
 #pragma once
 #include <string>
 using namespace std;
+struct Avl
+{
+    int data;
+    int height;
+    Avl *leftNode;
+    Avl *rightNode;
+};
 class Set
 {
 public:
-    Set();
+    Set(int newData);
     ~Set();
     void contain();
-    void add();
-    void remove();
+    Avl *add(int newData);
+    void remove(int newData);
     void clear();
     void size();
     void isempty();
     void printSet();
 
 private:
+    Avl *head;
+    Avl *addHelper(int newData, Avl *rHead, Avl *fHead);
+    Avl *LLmove(Avl *rHead);
+    Avl *RRmove(Avl *rHead);
+    Avl *LRmove(Avl *rHead);
+    Avl *RLmove(Avl *rHead);
+    void ZeroMove(Avl *rHead, Avl *fHead, Avl *newTop);
+    void AvlBalance(Avl *rHead, int flag, Avl *fHead);
 };
